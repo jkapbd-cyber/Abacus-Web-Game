@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Advanced Math Quiz</title>
+<title>Ultimate Math Quiz Game</title>
 
 <style>
 
@@ -21,9 +21,9 @@ body{
 
 .game-box{
 
-    width: 400px;
+    width: 420px;
     background: white;
-    margin: 50px auto;
+    margin: 40px auto;
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 0 20px gray;
@@ -37,39 +37,45 @@ h1{
 input{
 
     padding: 10px;
-    width: 150px;
-    font-size: 20px;
+    width: 180px;
+    font-size: 18px;
     margin-top: 10px;
 }
 
 button{
 
     padding: 10px 20px;
-    margin-top: 20px;
-    font-size: 18px;
+    margin-top: 15px;
+    font-size: 16px;
     border: none;
     border-radius: 10px;
-    background: #4da3ff;
+    background: #2196f3;
     color: white;
     cursor: pointer;
 }
 
 button:hover{
 
-    background: #0077ff;
+    background: #1976d2;
 }
 
 .info{
 
-    margin-top: 20px;
-    font-size: 22px;
+    margin-top: 15px;
+    font-size: 20px;
 }
 
 #result{
 
     margin-top: 20px;
-    font-size: 28px;
+    font-size: 25px;
     font-weight: bold;
+}
+
+ol{
+
+    text-align: left;
+    margin-top: 15px;
 }
 
 </style>
@@ -80,7 +86,7 @@ button:hover{
 
 <div class="game-box">
 
-<h1>🎮 Advanced Math Quiz</h1>
+<h1>🎮 Ultimate Math Quiz</h1>
 
 <h2 id="question">Question</h2>
 
@@ -108,9 +114,17 @@ button:hover{
 ⏱️ Time Left: <span id="timer">10</span>
 </div>
 
-<div class="info">
-🏆 High Score: <span id="highScore">0</span>
-</div>
+<h3>🏆 Leaderboard</h3>
+
+<input type="text" id="playerName" placeholder="Your Name">
+
+<br>
+
+<button onclick="saveLeaderboard()">
+Save Score
+</button>
+
+<ol id="leaderboard"></ol>
 
 </div>
 
@@ -126,10 +140,6 @@ let lives = 3;
 
 let timeLeft = 10;
 let timer;
-
-let highScore = localStorage.getItem("highScore") || 0;
-
-document.getElementById("highScore").innerText = highScore;
 
 function startTimer(){
 
@@ -190,7 +200,7 @@ function newQuestion(){
 function playCorrectSound(){
 
     let sound =
-        new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+    new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
 
     sound.play();
 }
@@ -198,7 +208,7 @@ function playCorrectSound(){
 function playWrongSound(){
 
     let sound =
-        new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+    new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
 
     sound.play();
 }
@@ -206,14 +216,14 @@ function playWrongSound(){
 function checkAnswer(){
 
     let userAnswer =
-        Number(document.getElementById("answer").value);
+    Number(document.getElementById("answer").value);
 
     if(userAnswer === correctAnswer){
 
         playCorrectSound();
 
         document.getElementById("result").innerHTML =
-            "✅ Correct!";
+        "✅ Correct!";
 
         score++;
 
@@ -221,11 +231,14 @@ function checkAnswer(){
 
             level++;
         }
+
     }
 
     else{
 
-        wrongAnswer("❌ Wrong! Correct Answer Was: " + correctAnswer);
+        wrongAnswer(
+        "❌ Wrong! Correct Answer Was: " + correctAnswer
+        );
     }
 
     updateGame();
@@ -250,8 +263,6 @@ function wrongAnswer(message){
         clearInterval(timer);
 
         alert("💀 Game Over!\nFinal Score: " + score);
-
-        location.reload();
     }
 }
 
@@ -262,16 +273,61 @@ function updateGame(){
     document.getElementById("level").innerText = level;
 
     document.getElementById("lives").innerText = lives;
+}
 
-    if(score > highScore){
+// Leaderboard
 
-        highScore = score;
+let leaderboard =
+JSON.parse(localStorage.getItem("leaderboard")) || [];
 
-        localStorage.setItem("highScore", highScore);
+function saveLeaderboard(){
+
+    let player =
+    document.getElementById("playerName").value;
+
+    if(player === ""){
+
+        player = "Player";
     }
 
-    document.getElementById("highScore").innerText = highScore;
+    leaderboard.push({
+
+        name: player,
+        score: score
+    });
+
+    leaderboard.sort((a,b)=> b.score - a.score);
+
+    leaderboard = leaderboard.slice(0,5);
+
+    localStorage.setItem(
+        "leaderboard",
+        JSON.stringify(leaderboard)
+    );
+
+    showLeaderboard();
 }
+
+function showLeaderboard(){
+
+    let list =
+    document.getElementById("leaderboard");
+
+    list.innerHTML = "";
+
+    leaderboard.forEach((player)=>{
+
+        let li =
+        document.createElement("li");
+
+        li.innerText =
+        player.name + " - " + player.score;
+
+        list.appendChild(li);
+    });
+}
+
+showLeaderboard();
 
 newQuestion();
 
