@@ -1,224 +1,281 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Advanced Math Quiz Game</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            text-align: center;
-            margin-top: 50px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .game-box {
-            background: white;
-            width: 400px;
-            margin: auto;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px gray;
-        }
+<title>Advanced Math Quiz</title>
 
-        h1 {
-            color: #333;
-        }
+<style>
 
-        input {
-            padding: 10px;
-            width: 120px;
-            font-size: 18px;
-            margin-top: 10px;
-        }
+body{
 
-        button {
-            padding: 10px 20px;
-            margin-top: 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 10px;
-            background: #4facfe;
-            color: white;
-        }
+    font-family: Arial;
+    text-align: center;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    margin: 0;
+    padding: 0;
+}
 
-        button:hover {
-            background: #2196f3;
-        }
+.game-box{
 
-        #result {
-            font-size: 22px;
-            margin-top: 15px;
-            font-weight: bold;
-        }
+    width: 400px;
+    background: white;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px gray;
+}
 
-        .info {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
+h1{
+
+    color: #222;
+}
+
+input{
+
+    padding: 10px;
+    width: 150px;
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+button{
+
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #4da3ff;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover{
+
+    background: #0077ff;
+}
+
+.info{
+
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+#result{
+
+    margin-top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+</style>
+
 </head>
 
 <body>
 
-    <div class="game-box">
+<div class="game-box">
 
-        <h1>🎮 Advanced Math Quiz</h1>
+<h1>🎮 Advanced Math Quiz</h1>
 
-        <h2 id="question">Question</h2>
+<h2 id="question">Question</h2>
 
-        <input type="number" id="answer" placeholder="Answer">
+<input type="number" id="answer" placeholder="Answer">
 
-        <br>
+<br>
 
-        <button onclick="checkAnswer()">Submit</button>
+<button onclick="checkAnswer()">Submit</button>
 
-        <div id="result"></div>
+<div id="result"></div>
 
-        <div class="info">
-            ❤️ Lives: <span id="lives">3</span>
-        </div>
+<div class="info">
+❤️ Lives: <span id="lives">3</span>
+</div>
 
-        <div class="info">
-            ⭐ Score: <span id="score">0</span>
-        </div>
+<div class="info">
+⭐ Score: <span id="score">0</span>
+</div>
 
-        <div class="info">
-            🎚️ Level: <span id="level">1</span>
-        </div>
+<div class="info">
+🎚️ Level: <span id="level">1</span>
+</div>
 
-        <div class="info">
-            ⏱️ Time Left: <span id="timer">10</span>
-        </div>
+<div class="info">
+⏱️ Time Left: <span id="timer">10</span>
+</div>
 
-    </div>
+<div class="info">
+🏆 High Score: <span id="highScore">0</span>
+</div>
 
-    <script>
+</div>
 
-        let num1;
-        let num2;
-        let correctAnswer;
+<script>
 
-        let score = 0;
-        let lives = 3;
-        let level = 1;
+let num1;
+let num2;
+let correctAnswer;
 
-        let timeLeft = 10;
-        let timer;
+let score = 0;
+let level = 1;
+let lives = 3;
 
-        function startTimer() {
+let timeLeft = 10;
+let timer;
+
+let highScore = localStorage.getItem("highScore") || 0;
+
+document.getElementById("highScore").innerText = highScore;
+
+function startTimer(){
+
+    clearInterval(timer);
+
+    timeLeft = 10;
+
+    document.getElementById("timer").innerText = timeLeft;
+
+    timer = setInterval(function(){
+
+        timeLeft--;
+
+        document.getElementById("timer").innerText = timeLeft;
+
+        if(timeLeft <= 0){
 
             clearInterval(timer);
 
-            timeLeft = 10;
-
-            document.getElementById("timer").innerText = timeLeft;
-
-            timer = setInterval(function () {
-
-                timeLeft--;
-
-                document.getElementById("timer").innerText = timeLeft;
-
-                if (timeLeft <= 0) {
-
-                    clearInterval(timer);
-
-                    wrongAnswer("⏰ Time Up!");
-                }
-
-            }, 1000);
+            wrongAnswer("⏰ Time Up! Correct Answer Was: " + correctAnswer);
         }
 
-        function newQuestion() {
+    },1000);
+}
 
-            num1 = Math.floor(Math.random() * (level * 10)) + 1;
-            num2 = Math.floor(Math.random() * (level * 10)) + 1;
+function newQuestion(){
 
-            correctAnswer = num1 + num2;
+    num1 = Math.floor(Math.random() * (level * 10)) + 1;
 
-            document.getElementById("question").innerText =
-                `${num1} + ${num2} = ?`;
+    num2 = Math.floor(Math.random() * (level * 10)) + 1;
 
-            startTimer();
+    let operations = ["+", "-", "*"];
+
+    let operation =
+        operations[Math.floor(Math.random() * operations.length)];
+
+    if(operation == "+"){
+
+        correctAnswer = num1 + num2;
+    }
+
+    else if(operation == "-"){
+
+        correctAnswer = num1 - num2;
+    }
+
+    else{
+
+        correctAnswer = num1 * num2;
+    }
+
+    document.getElementById("question").innerText =
+        `${num1} ${operation} ${num2} = ?`;
+
+    startTimer();
+}
+
+function playCorrectSound(){
+
+    let sound =
+        new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+
+    sound.play();
+}
+
+function playWrongSound(){
+
+    let sound =
+        new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
+    sound.play();
+}
+
+function checkAnswer(){
+
+    let userAnswer =
+        Number(document.getElementById("answer").value);
+
+    if(userAnswer === correctAnswer){
+
+        playCorrectSound();
+
+        document.getElementById("result").innerHTML =
+            "✅ Correct!";
+
+        score++;
+
+        if(score % 5 === 0){
+
+            level++;
         }
+    }
 
-        function playCorrectSound() {
+    else{
 
-            let sound = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-            sound.play();
-        }
+        wrongAnswer("❌ Wrong! Correct Answer Was: " + correctAnswer);
+    }
 
-        function playWrongSound() {
+    updateGame();
 
-            let sound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
-            sound.play();
-        }
+    document.getElementById("answer").value = "";
 
-        function checkAnswer() {
+    newQuestion();
+}
 
-            let userAnswer =
-                Number(document.getElementById("answer").value);
+function wrongAnswer(message){
 
-            if (userAnswer === correctAnswer) {
+    playWrongSound();
 
-                playCorrectSound();
+    document.getElementById("result").innerHTML = message;
 
-                document.getElementById("result").innerHTML =
-                    "✅ Correct Answer!";
+    lives--;
 
-                score++;
+    updateGame();
 
-                if (score % 5 === 0) {
+    if(lives <= 0){
 
-                    level++;
-                }
+        clearInterval(timer);
 
-            } else {
+        alert("💀 Game Over!\nFinal Score: " + score);
 
-                wrongAnswer("❌ Wrong Answer! Correct Answer Was: " + correctAnswer);
-            }
+        location.reload();
+    }
+}
 
-            updateGame();
+function updateGame(){
 
-            document.getElementById("answer").value = "";
+    document.getElementById("score").innerText = score;
 
-            newQuestion();
-        }
+    document.getElementById("level").innerText = level;
 
-        function wrongAnswer(message) {
+    document.getElementById("lives").innerText = lives;
 
-            playWrongSound();
+    if(score > highScore){
 
-            document.getElementById("result").innerHTML = message;
+        highScore = score;
 
-            lives--;
+        localStorage.setItem("highScore", highScore);
+    }
 
-            updateGame();
+    document.getElementById("highScore").innerText = highScore;
+}
 
-            if (lives <= 0) {
+newQuestion();
 
-                clearInterval(timer);
-
-                alert("💀 Game Over!\nFinal Score: " + score);
-
-                location.reload();
-            }
-        }
-
-        function updateGame() {
-
-            document.getElementById("score").innerText = score;
-
-            document.getElementById("lives").innerText = lives;
-
-            document.getElementById("level").innerText = level;
-        }
-
-        newQuestion();
-
-    </script>
+</script>
 
 </body>
 
