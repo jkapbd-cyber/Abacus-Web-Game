@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Math Quiz Game</title>
+    <style>
+        body{
+            font-family: Arial;
+            text-align:center;
+            margin-top:100px;
+            background:#f2f2f2;
+        }
+
+        .box{
+            background:white;
+            padding:30px;
+            width:300px;
+            margin:auto;
+            border-radius:10px;
+            box-shadow:0 0 10px gray;
+        }
+
+        button{
+            padding:10px 20px;
+            margin-top:10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>Math Quiz Game</h1>
+
+    <h2 id="question"></h2>
+
+    <input type="number" id="answer">
+
+    <br>
+
+    <button onclick="checkAnswer()">Submit</button>
+
+    <h3 id="result"></h3>
+
+    <h3>Score: <span id="score">0</span></h3>
+</div>
+
+<script>
+let num1;
+let num2;
+let answer;
+let score = 0;
+
+function newQuestion(){
+    num1 = Math.floor(Math.random()*10);
+    num2 = Math.floor(Math.random()*10);
+
+    answer = num1 + num2;
+
+    document.getElementById("question").innerText =
+        num1 + " + " + num2;
+}
+
+function checkAnswer(){
+
+    let userAnswer =
+        Number(document.getElementById("answer").value);
+
+    if(userAnswer === answer){
+        document.getElementById("result").innerText =
+            "Correct!";
+        score++;
+    } else {
+        document.getElementById("result").innerText =
+            "Wrong!";
+    }
+
+    document.getElementById("score").innerText = score;
+
+    document.getElementById("answer").value = "";
+
+    newQuestion();
+}
+
+newQuestion();
+</script>
+
+</body>
+</html>
